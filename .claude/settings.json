@@ -1,0 +1,5 @@
+{
+  "enabledPlugins": {
+    "nuxt-ui-v4@claude-skills": true
+  }
+}

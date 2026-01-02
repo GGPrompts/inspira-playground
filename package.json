@@ -10,8 +10,10 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@maz-ui/nuxt": "^4.3.3",
     "@vueuse/core": "^14.1.0",
     "gsap": "^3.14.2",
+    "lucide-vue-next": "^0.562.0",
     "motion-v": "^1.7.5",
     "nuxt": "^4.2.2",
     "ogl": "^1.0.11",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "@types/three": "^0.182.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.4.0",

@@ -1,59 +1,68 @@
 <template>
   <button
     :class="cn(
-      'group relative z-0 flex cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap border border-white/10 px-6 py-3',
-      'transform-gpu transition-transform duration-300 ease-in-out active:translate-y-px',
+      'group relative z-0 flex cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap px-6 py-3',
+      'transform-gpu transition-all duration-300 ease-out active:translate-y-px active:scale-[0.98]',
       props.class
     )"
     :style="{
-      '--spread': '90deg',
       '--shimmer-color': shimmerColor,
+      '--shimmer-color-faded': shimmerColor + '40',
       '--radius': borderRadius,
       '--speed': shimmerDuration,
-      '--cut': '0.1em',
       '--bg': background,
       borderRadius: borderRadius,
     } as Record<string, string>"
   >
-    <!-- spark container -->
+    <!-- Smooth gradient border -->
     <div
-      :class="cn(
-        '-z-30 blur-[2px]',
-        'absolute inset-0 overflow-visible [container-type:size]'
-      )"
-    >
-      <!-- spark -->
+      class="absolute -inset-[1px] rounded-[inherit] opacity-75 blur-[1px] transition-opacity duration-300 group-hover:opacity-100"
+      :style="{
+        background: `linear-gradient(135deg, ${shimmerColor}30, transparent 40%, transparent 60%, ${shimmerColor}30)`,
+        borderRadius: borderRadius,
+      }"
+    />
+
+    <!-- Animated glow ring -->
+    <div class="absolute -inset-[2px] rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
       <div
-        class="absolute inset-0 h-[100cqh] animate-shimmer-slide [aspect-ratio:1] [border-radius:0] [mask:none]"
-      >
-        <!-- spark before -->
-        <div
-          class="animate-spin-around absolute -inset-full w-auto rotate-0 [background:conic-gradient(from_calc(270deg-(var(--spread)*0.5)),transparent_0,var(--shimmer-color)_var(--spread),transparent_var(--spread))] [translate:0_0]"
-        />
-      </div>
+        class="absolute inset-0 rounded-[inherit] animate-glow-pulse"
+        :style="{
+          boxShadow: `0 0 20px ${shimmerColor}40, 0 0 40px ${shimmerColor}20`,
+        }"
+      />
     </div>
 
-    <slot>{{ props.children }}</slot>
+    <!-- Flowing shimmer effect -->
+    <div class="absolute inset-0 rounded-[inherit] overflow-hidden">
+      <div
+        class="absolute inset-0 animate-shimmer-flow opacity-60"
+        :style="{
+          background: `linear-gradient(90deg, transparent, ${shimmerColor}30, transparent)`,
+          transform: 'translateX(-100%)',
+        }"
+      />
+    </div>
 
-    <!-- Highlight -->
+    <!-- Content -->
+    <span class="relative z-10 flex items-center">
+      <slot>{{ props.children }}</slot>
+    </span>
+
+    <!-- Inner highlight -->
     <div
       :class="cn(
-        'insert-0 absolute size-full',
-        'rounded-2xl px-4 py-1.5 text-sm font-medium shadow-[inset_0_-8px_10px_#ffffff1f]',
-        // transition
-        'transform-gpu transition-all duration-300 ease-in-out',
-        // on hover
-        'group-hover:shadow-[inset_0_-6px_10px_#ffffff3f]',
-        // on click
-        'group-active:shadow-[inset_0_-10px_10px_#ffffff3f]'
+        'absolute inset-0 rounded-[inherit]',
+        'shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]',
+        'transition-shadow duration-300',
+        'group-hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-1px_0_rgba(255,255,255,0.05)]'
       )"
     />
 
-    <!-- backdrop -->
+    <!-- Background -->
     <div
-      :class="cn(
-        'absolute -z-20 [background:var(--bg)] [border-radius:var(--radius)] [inset:var(--cut)]'
-      )"
+      class="absolute inset-0 -z-10 rounded-[inherit]"
+      :style="{ background: background }"
     />
   </button>
 </template>
@@ -81,34 +90,30 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <style>
-@keyframes shimmer-slide {
-  to {
-    transform: translate(calc(100cqw - 100%), 0);
-  }
-}
-
-@keyframes spin-around {
+@keyframes shimmer-flow {
   0% {
-    transform: translateZ(0) rotate(0);
-  }
-  15%,
-  35% {
-    transform: translateZ(0) rotate(90deg);
-  }
-  65%,
-  85% {
-    transform: translateZ(0) rotate(270deg);
+    transform: translateX(-100%);
   }
   100% {
-    transform: translateZ(0) rotate(360deg);
+    transform: translateX(200%);
   }
 }
 
-.animate-shimmer-slide {
-  animation: shimmer-slide var(--speed) ease-in-out infinite;
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-.animate-spin-around {
-  animation: spin-around calc(var(--speed) * 2) infinite linear;
+.animate-shimmer-flow {
+  animation: shimmer-flow var(--speed, 3s) ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
 }
 </style>
