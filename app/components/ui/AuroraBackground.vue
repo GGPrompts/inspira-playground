@@ -23,7 +23,7 @@
             after:[background-size:200%,_100%]
             after:animate-aurora after:[background-attachment:fixed] after:mix-blend-difference
             pointer-events-none
-            absolute -inset-[10px] opacity-50 will-change-transform`,
+            absolute -inset-[10px] opacity-70 will-change-transform`,
             showRadialGradient &&
               `[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,var(--transparent)_70%)]`
           )"
@@ -58,7 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 .animate-aurora {
-  animation: aurora 60s linear infinite;
+  animation: aurora 20s linear infinite;
 }
 
 :root {
