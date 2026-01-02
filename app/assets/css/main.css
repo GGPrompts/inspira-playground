@@ -23,37 +23,58 @@
   --radius: 0.625rem;
   --background: #ffffff;
   --foreground: #0f172a;
+
+  /* Neon accent colors */
+  --neon-cyan: #00ffff;
+  --neon-purple: #a855f7;
+  --neon-green: #22c55e;
+  --neon-pink: #ec4899;
+  --neon-orange: #f97316;
 }
 
 .dark {
-  --background: #0f172a;
+  --background: #0a0a0f;
   --foreground: #f8fafc;
   --card: #0f172a;
   --card-foreground: #f8fafc;
   --popover: #0f172a;
   --popover-foreground: #f8fafc;
-  --primary: #f8fafc;
-  --primary-foreground: #1e293b;
-  --secondary: #334155;
+  --primary: #00ffff;
+  --primary-foreground: #0a0a0f;
+  --secondary: #1e293b;
   --secondary-foreground: #f8fafc;
-  --muted: #334155;
+  --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --accent: #334155;
+  --accent: #a855f7;
   --accent-foreground: #f8fafc;
   --destructive: #7f1d1d;
   --destructive-foreground: #fca5a5;
   --border: #334155;
   --input: #334155;
-  --ring: #475569;
+  --ring: #00ffff;
 }
 
 @layer base {
   * {
-    @apply border-slate-200 dark:border-slate-700;
+    @apply border-slate-200 dark:border-slate-800;
   }
   body {
-    @apply bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-50;
+    @apply bg-white text-slate-900 dark:bg-[#0a0a0f] dark:text-slate-50;
   }
+
+  /* Apply JetBrains Mono to headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Terminal/code font utility */
+.font-terminal {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 html {
@@ -64,4 +85,303 @@ html.dark {
 }
 html.light {
   color-scheme: light;
+}
+
+/* Terminal Glow Effects */
+.terminal-glow {
+  text-shadow:
+    0 0 5px var(--neon-cyan),
+    0 0 10px var(--neon-cyan),
+    0 0 20px var(--neon-cyan),
+    0 0 40px var(--neon-cyan);
+}
+
+.terminal-glow-purple {
+  text-shadow:
+    0 0 5px var(--neon-purple),
+    0 0 10px var(--neon-purple),
+    0 0 20px var(--neon-purple),
+    0 0 40px var(--neon-purple);
+}
+
+.terminal-glow-green {
+  text-shadow:
+    0 0 5px var(--neon-green),
+    0 0 10px var(--neon-green),
+    0 0 20px var(--neon-green);
+}
+
+.terminal-glow-subtle {
+  text-shadow:
+    0 0 5px var(--neon-cyan),
+    0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Border glow effects */
+.border-glow {
+  box-shadow:
+    0 0 15px rgba(0, 255, 255, 0.15),
+    inset 0 0 15px rgba(0, 255, 255, 0.05);
+}
+
+.border-glow-purple {
+  box-shadow:
+    0 0 15px rgba(168, 85, 247, 0.2),
+    inset 0 0 15px rgba(168, 85, 247, 0.05);
+}
+
+.border-glow-hover:hover {
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.3),
+    0 0 40px rgba(0, 255, 255, 0.1),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.gradient-text-neon {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-cyber {
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animated gradient background */
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Pulse glow animation */
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.6), 0 0 50px rgba(0, 255, 255, 0.3);
+  }
+}
+
+/* Neon border animation */
+.neon-border {
+  position: relative;
+}
+
+.neon-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink), var(--neon-cyan));
+  background-size: 400% 400%;
+  border-radius: inherit;
+  animation: neon-rotate 4s linear infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.neon-border:hover::before {
+  opacity: 0.5;
+}
+
+@keyframes neon-rotate {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+
+/* Scanline effect for terminal vibe */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Typing cursor animation */
+.cursor-blink::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Badge styles */
+.badge-neon {
+  @apply px-3 py-1 text-xs font-medium rounded-full;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}
+
+.badge-purple {
+  @apply px-3 py-1 text-xs font-medium rounded-full;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: var(--neon-purple);
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+}
+
+.badge-green {
+  @apply px-3 py-1 text-xs font-medium rounded-full;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: var(--neon-green);
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+}
+
+/* Floating animation */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Stagger children animation helper */
+.stagger-children > * {
+  opacity: 0;
+  animation: fade-up 0.6s ease forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Maz-UI Component Overrides for Terminal Theme */
+
+/* MazInputCode - Terminal style */
+.maz-terminal-code .m-input-code-input {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(0, 255, 255, 0.3) !important;
+  color: var(--neon-cyan) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+.maz-terminal-code .m-input-code-input:focus {
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+}
+
+.maz-terminal-code .m-input-code-input.--has-value {
+  border-color: var(--neon-cyan) !important;
+}
+
+/* MazBtn - Terminal style */
+.maz-terminal-btn {
+  background: rgba(0, 255, 255, 0.1) !important;
+  border: 1px solid rgba(0, 255, 255, 0.5) !important;
+  color: var(--neon-cyan) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  transition: all 0.3s ease !important;
+}
+
+.maz-terminal-btn:hover {
+  background: rgba(0, 255, 255, 0.2) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3) !important;
+}
+
+/* MazDialog - Terminal style */
+.maz-terminal-dialog .m-dialog-content {
+  background: rgba(10, 10, 15, 0.95) !important;
+  border: 1px solid rgba(0, 255, 255, 0.3) !important;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.1) !important;
+}
+
+.maz-terminal-dialog .m-dialog-header {
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
+}
+
+.maz-terminal-dialog .m-dialog-header__title {
+  color: var(--neon-cyan) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+.maz-terminal-dialog .m-dialog-footer {
+  border-top: 1px solid rgba(0, 255, 255, 0.2) !important;
+}
+
+/* MazChart container styling */
+.maz-chart canvas {
+  filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.1));
 }

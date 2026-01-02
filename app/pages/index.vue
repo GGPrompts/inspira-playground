@@ -39,7 +39,7 @@
           <!-- Morphing headline -->
           <MorphingText
             :texts="headlines"
-            class="text-4xl md:text-6xl lg:text-7xl font-bold text-white terminal-glow mb-6"
+            class="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-100 terminal-glow mb-6"
           />
 
           <!-- Subtitle -->
@@ -122,7 +122,7 @@
         <!-- Section header -->
         <ScrollReveal direction="up" :delay="0">
           <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-5xl font-bold text-white terminal-glow mb-4">
+            <h2 class="text-3xl md:text-5xl font-bold text-slate-100 terminal-glow mb-4">
               Meet the Team
             </h2>
             <p class="text-slate-400 text-lg">
@@ -203,7 +203,7 @@
         <!-- Section header -->
         <ScrollReveal direction="up" :delay="0">
           <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-5xl font-bold text-white terminal-glow-purple mb-4">
+            <h2 class="text-3xl md:text-5xl font-bold text-slate-100 terminal-glow-purple mb-4">
               Featured Projects
             </h2>
             <p class="text-slate-400 text-lg">
@@ -267,7 +267,7 @@
         <ScrollReveal direction="up" :delay="100">
           <TiltCard :max-tilt="6" :show-spotlight="true" spotlight-color="rgba(168, 85, 247, 0.1)">
             <div class="glass rounded-3xl p-8 md:p-12 border-glow pulse-glow">
-              <h2 class="text-2xl md:text-4xl font-bold text-white mb-4">
+              <h2 class="text-2xl md:text-4xl font-bold text-slate-100 mb-4">
                 Ready to Explore?
               </h2>
               <p class="text-slate-400 mb-8 max-w-2xl mx-auto">
