@@ -1,8 +1,12 @@
 <template>
   <div :class="cn('relative', props.class)">
     <span
-      class="inline-block font-bold transition-all duration-1000 ease-in-out"
-      :style="{ opacity: isTransitioning ? 0 : 1, filter: isTransitioning ? 'blur(8px)' : 'blur(0)' }"
+      class="inline-block font-bold transition-all duration-700 ease-in-out"
+      :style="{
+        opacity: isTransitioning ? 0 : 1,
+        filter: isTransitioning ? 'blur(6px)' : 'blur(0)',
+        transform: isTransitioning ? 'translateY(-4px)' : 'translateY(0)'
+      }"
     >
       {{ currentText }}
     </span>
