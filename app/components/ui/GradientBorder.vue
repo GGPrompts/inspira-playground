@@ -1,10 +1,15 @@
 <template>
   <div :class="cn('relative rounded-lg', props.class)">
-    <!-- Animated gradient border (thin glow) -->
+    <!-- Animated gradient border using conic gradient rotation -->
     <div
-      class="absolute inset-0 rounded-[inherit] -z-10"
-      :style="borderStyle"
-    />
+      class="absolute inset-0 rounded-[inherit] -z-10 overflow-hidden"
+    >
+      <div
+        class="absolute inset-[-50%] gradient-spinner"
+        :class="{ 'animate-spin-slow': animated }"
+        :style="gradientStyle"
+      />
+    </div>
     <div class="absolute inset-[1px] rounded-[inherit] bg-[#0a0a0f] -z-10" />
 
     <!-- Inner content -->
@@ -32,25 +37,23 @@ const props = withDefaults(defineProps<Props>(), {
   animated: true
 })
 
-const borderStyle = computed(() => ({
-  background: `linear-gradient(${props.animated ? 'var(--gradient-angle)' : '135deg'}, ${props.colors.join(', ')})`,
-  animation: props.animated ? `gradient-rotate ${props.speed}s linear infinite` : 'none'
+const gradientStyle = computed(() => ({
+  background: `conic-gradient(from 0deg, ${props.colors.join(', ')})`,
+  animationDuration: `${props.speed}s`
 }))
 </script>
 
 <style scoped>
-@property --gradient-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
+.animate-spin-slow {
+  animation: spin linear infinite;
 }
 
-@keyframes gradient-rotate {
-  0% {
-    --gradient-angle: 0deg;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  100% {
-    --gradient-angle: 360deg;
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>
