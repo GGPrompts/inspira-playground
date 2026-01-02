@@ -1,9 +1,27 @@
 <template>
   <div class="relative w-full h-screen overflow-hidden bg-black">
-    <!-- Infinite Grid with Terminal Cards -->
+    <!-- Loading State -->
+    <div v-if="loading" class="absolute inset-0 z-30 flex items-center justify-center bg-black">
+      <div class="grid grid-cols-3 gap-4 p-8">
+        <SkeletonLoader
+          v-for="i in 9"
+          :key="i"
+          width="280px"
+          height="200px"
+          shimmer-color="rgba(0, 255, 255, 0.15)"
+          class="rounded-xl"
+        />
+      </div>
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-cyan-400 font-mono">
+        Loading {{ repos.length > 0 ? repos.length : '' }} projects...
+      </div>
+    </div>
+
+    <!-- Infinite Grid with GitHub Repos -->
     <ClientOnly>
       <InfiniteGrid
-        :card-data="terminalCards"
+        v-if="!loading && filteredCards.length > 0"
+        :card-data="filteredCards"
         :options="gridOptions"
         class="absolute inset-0"
         @tile-clicked="handleTileClick"
@@ -12,35 +30,76 @@
 
     <!-- Overlay UI -->
     <div class="absolute top-0 left-0 right-0 z-20 p-6 pointer-events-none">
-      <h1 class="text-3xl font-bold text-white mb-1">Terminal Dashboard</h1>
-      <p class="text-white/50">Rotate and zoom to explore your sessions</p>
-    </div>
-
-    <!-- Selected Terminal Info -->
-    <div
-      v-if="selectedTerminal"
-      class="absolute bottom-8 left-8 right-8 z-20 bg-black/80 backdrop-blur-lg rounded-xl border border-white/10 p-6 pointer-events-auto"
-    >
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-xl font-bold text-white">{{ selectedTerminal.title }}</h3>
-          <p class="text-white/50 text-sm">{{ selectedTerminal.description }}</p>
-          <div class="flex gap-2 mt-2">
+          <h1 class="text-3xl font-bold text-white mb-1">Project Explorer</h1>
+          <p class="text-white/50">{{ filteredCards.length }} projects • Rotate and zoom to explore</p>
+        </div>
+        <!-- Category Filter -->
+        <div class="pointer-events-auto">
+          <select
+            v-model="selectedCategory"
+            class="bg-black/80 backdrop-blur border border-cyan-500/30 text-cyan-400 px-4 py-2 rounded-lg font-mono text-sm focus:outline-none focus:border-cyan-400 cursor-pointer"
+          >
+            <option value="All">All Projects</option>
+            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Project Info -->
+    <div
+      v-if="selectedTerminal"
+      class="absolute bottom-8 left-8 right-8 z-20 bg-black/90 backdrop-blur-lg rounded-xl border border-cyan-500/20 p-6 pointer-events-auto"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <h3 class="text-xl font-bold text-white font-mono">{{ selectedTerminal.title }}</h3>
+            <span class="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-xs rounded font-mono">
+              {{ selectedTerminal.category }}
+            </span>
+            <span v-if="selectedTerminal.stars > 0" class="text-yellow-400 text-sm">
+              ⭐ {{ selectedTerminal.stars }}
+            </span>
+          </div>
+          <p class="text-white/60 text-sm mb-3">{{ selectedTerminal.description }}</p>
+          <div class="flex gap-2 flex-wrap">
             <span
               v-for="tag in selectedTerminal.tags"
               :key="tag"
-              class="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 text-xs rounded"
+              class="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded font-mono"
             >
               {{ tag }}
             </span>
           </div>
         </div>
-        <button
-          class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors"
-          @click="selectedTerminal = null"
-        >
-          Close
-        </button>
+        <div class="flex items-center gap-3 ml-6">
+          <a
+            :href="selectedTerminal.repoUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg transition-colors font-mono text-sm"
+          >
+            View Repo →
+          </a>
+          <a
+            v-if="selectedTerminal.demoUrl"
+            :href="selectedTerminal.demoUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors font-mono text-sm"
+          >
+            Live Demo →
+          </a>
+          <button
+            class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+            @click="selectedTerminal = null"
+          >
+            ✕
+          </button>
+        </div>
       </div>
     </div>
 
@@ -52,111 +111,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import type { CardData } from "../components/ui/infinite-grid/types";
 import InfiniteGrid from "../components/ui/infinite-grid/InfiniteGrid.vue";
+import SkeletonLoader from "../components/ui/SkeletonLoader.vue";
+import { useGitHubRepos, type PortfolioCardData } from "../composables/useGitHubRepos";
 
-const selectedTerminal = ref<CardData | null>(null);
+// GitHub repos composable
+const { repos, loading, fetchRepos, getByCategory, getCategories } = useGitHubRepos();
 
-// Terminal card data matching the CardData interface
-const terminalCards = ref<CardData[]>([
-  {
-    title: "Claude: Frontend",
-    badge: "active",
-    description: "npm run dev - Vite v5.0.0 ready",
-    tags: ["vue", "vite", "dev"],
-    date: "now",
-    image: "https://picsum.photos/seed/frontend/400/300",
-  },
-  {
-    title: "Claude: Backend",
-    badge: "active",
-    description: "Server running on port 3000",
-    tags: ["node", "express", "api"],
-    date: "2m ago",
-    image: "https://picsum.photos/seed/backend/400/300",
-  },
-  {
-    title: "lazygit",
-    badge: "active",
-    description: "1 branch • 3 commits ahead",
-    tags: ["git", "tui"],
-    date: "5m ago",
-    image: "https://picsum.photos/seed/git/400/300",
-  },
-  {
-    title: "btop",
-    badge: "active",
-    description: "CPU 78% • MEM 62% • Monitoring",
-    tags: ["system", "monitor"],
-    date: "now",
-    image: "https://picsum.photos/seed/monitor/400/300",
-  },
-  {
-    title: "Claude: Tests",
-    badge: "idle",
-    description: "24 passed, 24 total - All green",
-    tags: ["vitest", "testing"],
-    date: "10m ago",
-    image: "https://picsum.photos/seed/tests/400/300",
-  },
-  {
-    title: "zsh",
-    badge: "idle",
-    description: "~/projects - Ready for input",
-    tags: ["shell", "bash"],
-    date: "15m ago",
-    image: "https://picsum.photos/seed/shell/400/300",
-  },
-  {
-    title: "Claude: Docs",
-    badge: "active",
-    description: "Writing API documentation",
-    tags: ["docs", "markdown"],
-    date: "3m ago",
-    image: "https://picsum.photos/seed/docs/400/300",
-  },
-  {
-    title: "Docker",
-    badge: "active",
-    description: "3 containers running",
-    tags: ["docker", "containers"],
-    date: "1h ago",
-    image: "https://picsum.photos/seed/docker/400/300",
-  },
-  {
-    title: "lnav",
-    badge: "active",
-    description: "Watching backend/logs/unified.log",
-    tags: ["logs", "debug"],
-    date: "now",
-    image: "https://picsum.photos/seed/logs/400/300",
-  },
-  {
-    title: "Claude: API",
-    badge: "active",
-    description: "Building REST endpoints",
-    tags: ["api", "rest", "typescript"],
-    date: "8m ago",
-    image: "https://picsum.photos/seed/api/400/300",
-  },
-  {
-    title: "nvim",
-    badge: "idle",
-    description: "Editing nuxt.config.ts",
-    tags: ["editor", "vim"],
-    date: "20m ago",
-    image: "https://picsum.photos/seed/editor/400/300",
-  },
-  {
-    title: "htop",
-    badge: "active",
-    description: "System processes overview",
-    tags: ["system", "processes"],
-    date: "now",
-    image: "https://picsum.photos/seed/htop/400/300",
-  },
-]);
+// Category filter state
+const selectedCategory = ref("All");
+const selectedTerminal = ref<PortfolioCardData | null>(null);
+
+// Available categories (computed after repos load)
+const categories = computed(() => getCategories());
+
+// Filtered cards based on selected category
+const filteredCards = computed<CardData[]>(() => {
+  const sourceRepos = selectedCategory.value === "All"
+    ? repos.value
+    : getByCategory(selectedCategory.value);
+
+  // Transform PortfolioCardData to CardData for InfiniteGrid
+  // Spread tags to create mutable array copy
+  return sourceRepos.map((repo) => ({
+    title: repo.title,
+    badge: repo.badge,
+    description: repo.description,
+    tags: [...repo.tags],
+    date: repo.date,
+    image: repo.image,
+  }));
+});
+
+// Fetch repos on mount
+onMounted(() => {
+  fetchRepos();
+});
 
 const gridOptions = {
   gridCols: 4,
@@ -173,6 +165,15 @@ const gridOptions = {
 };
 
 function handleTileClick(cardData: CardData) {
-  selectedTerminal.value = cardData;
+  // Find the full PortfolioCardData by title and create mutable copy
+  const fullData = repos.value.find(r => r.title === cardData.title);
+  if (fullData) {
+    selectedTerminal.value = {
+      ...fullData,
+      tags: [...fullData.tags],
+    };
+  } else {
+    selectedTerminal.value = null;
+  }
 }
 </script>
